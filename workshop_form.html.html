@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ワークショップ予約フォーム</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --retro-red: #e60012;
+            --retro-blue: #005bac;
+            --retro-yellow: #fbd603;
+            --retro-green: #009e49;
+            --retro-black: #222222;
+        }
+        
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f4f4f0;
+            color: var(--retro-black);
+            background-image: 
+                linear-gradient(#e5e5df 1px, transparent 1px),
+                linear-gradient(90deg, #e5e5df 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        .font-pixel {
+            font-family: 'DotGothic16', sans-serif;
+        }
+
+        .retro-box {
+            background-color: #ffffff;
+            border: 4px solid var(--retro-black);
+            box-shadow: 6px 6px 0px rgba(34, 34, 34, 0.2);
+        }
+
+        /* 入力フォームのレトロなスタイル */
+        .retro-input {
+            width: 100%;
+            border: 4px solid var(--retro-black);
+            padding: 0.75rem;
+            font-size: 1rem;
+            font-weight: bold;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .retro-input:focus {
+            background-color: #fffae6;
+            border-color: var(--retro-blue);
+            box-shadow: 4px 4px 0px var(--retro-yellow);
+        }
+
+        /* 必須マーク */
+        .required-badge {
+            background-color: var(--retro-red);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border: 2px solid var(--retro-black);
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        /* 送信ボタンの押し込みエフェクト */
+        .retro-btn {
+            box-shadow: 0px 6px 0px 0px #990000, 4px 10px 0px 0px rgba(0,0,0,0.2);
+            transition: all 0.1s;
+        }
+        .retro-btn:active {
+            transform: translateY(6px);
+            box-shadow: 0px 0px 0px 0px #990000, 4px 4px 0px 0px rgba(0,0,0,0.2);
+        }
+
+        /* モーダル（完了ポップアップ） */
+        #success-modal {
+            display: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8 px-4 sm:px-6 flex justify-center items-start">
+
+    <div class="max-w-xl w-full">
+        <!-- ヘッダー -->
+        <div class="text-center mb-6">
+            <h1 class="font-pixel text-2xl sm:text-3xl text-black bg-yellow-400 border-4 border-black py-3 px-4 shadow-[4px_4px_0px_rgba(0,0,0,0.2)] inline-block transform -rotate-1">
+                ▶ ENTRY FORM
+            </h1>
+            <p class="mt-4 font-bold text-gray-800">
+                スマホで作る！生成AIゲーム作成ワークショップ<br>
+                <span class="text-sm text-gray-600">参加申し込みフォーム</span>
+            </p>
+        </div>
+
+        <!-- フォーム本体 -->
+        <div class="retro-box p-6 sm:p-8 border-t-8 border-t-blue-600">
+            <!-- いただいたFormspreeのURLを設定しました -->
+            <form id="reservation-form" action="https://formspree.io/f/mjgarvvl" method="POST" onsubmit="submitForm(event)">
+                
+                <div class="space-y-6">
+                    
+                    <!-- 参加者氏名 -->
+                    <div>
+                        <label class="block font-pixel text-lg mb-2">
+                            参加者のお名前 <span class="required-badge">必須</span>
+                        </label>
+                        <!-- name="お名前" を追加しました -->
+                        <input type="text" name="お名前" required placeholder="例：松下 太郎" class="retro-input">
+                    </div>
+
+                    <!-- 学年・年齢 -->
+                    <div>
+                        <label class="block font-pixel text-lg mb-2">
+                            学年（または年齢） <span class="required-badge">必須</span>
+                        </label>
+                        <!-- name="学年" を追加しました -->
+                        <select name="学年" required class="retro-input bg-white cursor-pointer">
+                            <option value="">選択してください</option>
+                            <option value="小学5年生">小学5年生</option>
+                            <option value="小学6年生">小学6年生</option>
+                            <option value="中学生">中学生</option>
+                            <option value="高校生">高校生</option>
+                            <option value="その他（大人）">その他（大人）</option>
+                        </select>
+                    </div>
+
+                    <!-- 保護者氏名 -->
+                    <div class="bg-gray-100 p-4 border-2 border-dashed border-gray-400">
+                        <label class="block font-pixel text-lg mb-2 text-blue-800">
+                            保護者の方のお名前
+                        </label>
+                        <p class="text-xs text-gray-600 mb-2 font-bold">※参加者が小学生の場合はご入力ください。</p>
+                        <!-- name="保護者氏名" を追加しました -->
+                        <input type="text" name="保護者氏名" placeholder="例：松下 一郎" class="retro-input border-gray-400">
+                    </div>
+
+                    <!-- メールアドレス -->
+                    <div>
+                        <label class="block font-pixel text-lg mb-2">
+                            メールアドレス <span class="required-badge">必須</span>
+                        </label>
+                        <p class="text-xs text-gray-600 mb-2 font-bold">※当日のご案内をお送りします。</p>
+                        <!-- Formspree用に name="email" に設定しました -->
+                        <input type="email" name="email" required placeholder="例：workshop@example.com" class="retro-input">
+                    </div>
+
+                    <!-- 電話番号 -->
+                    <div>
+                        <label class="block font-pixel text-lg mb-2">
+                            電話番号 <span class="required-badge">必須</span>
+                        </label>
+                        <p class="text-xs text-gray-600 mb-2 font-bold">※当日連絡がつく番号をお願いします。</p>
+                        <!-- name="電話番号" を追加しました -->
+                        <input type="tel" name="電話番号" required placeholder="例：090-0000-0000" class="retro-input">
+                    </div>
+
+                    <!-- 参加人数 -->
+                    <div>
+                        <label class="block font-pixel text-lg mb-2">
+                            参加人数（付き添い含む） <span class="required-badge">必須</span>
+                        </label>
+                        <!-- name="参加人数" を追加しました -->
+                        <input type="number" name="参加人数" min="1" max="5" required value="1" class="retro-input w-32">
+                        <span class="font-bold ml-2">名</span>
+                    </div>
+
+                    <!-- 備考欄 -->
+                    <div>
+                        <label class="block font-pixel text-lg mb-2">
+                            ご質問・ご要望など
+                        </label>
+                        <!-- name="備考" を追加しました -->
+                        <textarea name="備考" rows="3" placeholder="ご不明な点があればご自由にお書きください。" class="retro-input resize-none"></textarea>
+                    </div>
+
+                </div>
+
+                <!-- 送信ボタン -->
+                <div class="mt-10 text-center">
+                    <button type="submit" class="w-full sm:w-auto bg-red-600 text-white font-pixel text-2xl py-4 px-12 border-4 border-black retro-btn relative active:bg-red-700">
+                        ▶ そうしんする
+                    </button>
+                    <p class="text-xs text-gray-500 mt-4 font-bold">
+                        ※送信後、担当者より折り返しご連絡いたします。<br>
+                        主催：電脳図書館<br>
+　　　　　　　　　　　協賛：さくら子庵株式会社
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 予約完了モーダル -->
+    <div id="success-modal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+        <div class="bg-black border-4 border-white p-6 max-w-sm w-full text-center relative shadow-[0_0_20px_rgba(255,255,0,0.5)]">
+            <!-- 飾り -->
+            <div class="absolute top-2 left-2 w-2 h-2 bg-white"></div>
+            <div class="absolute top-2 right-2 w-2 h-2 bg-white"></div>
+            <div class="absolute bottom-2 left-2 w-2 h-2 bg-white"></div>
+            <div class="absolute bottom-2 right-2 w-2 h-2 bg-white"></div>
+            
+            <i data-lucide="check-circle" class="w-16 h-16 text-green-400 mx-auto mb-4"></i>
+            <h2 class="font-pixel text-2xl text-yellow-400 mb-4 animate-pulse">MISSION CLEAR!</h2>
+            <p class="text-white font-bold text-sm leading-relaxed mb-6">
+                よやく が かんりょう した！<br>
+                <br>
+                とうじつは スマホ の じゅうでん を<br>
+                わすれずに きてくれよな！
+            </p>
+            <button onclick="closeModal()" class="bg-white text-black font-pixel py-2 px-6 border-2 border-black hover:bg-gray-200">
+                とじる
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Lucideアイコンの初期化
+        lucide.createIcons();
+
+        // Formspreeにデータを送信して、完了画面を出す処理
+        function submitForm(event) {
+            event.preventDefault(); // 画面が切り替わるのを防ぐ
+            
+            const form = event.target;
+            const btn = form.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            
+            // ボタンを「つうしんちゅう...」にする
+            btn.innerHTML = 'つうしんちゅう...';
+            btn.classList.add('opacity-70', 'pointer-events-none');
+
+            // 入力されたデータを集める
+            const formData = new FormData(form);
+
+            // Formspreeへ送信
+            fetch(form.action, {
+                method: form.method,
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    // 送信成功したらミッションクリア画面を出す
+                    document.getElementById('success-modal').style.display = 'flex';
+                    form.reset(); // フォームを空にする
+                } else {
+                    alert('エラーが発生しました。もう一度お試しください。');
+                }
+            }).catch(error => {
+                alert('通信エラーが発生しました。インターネット接続をご確認ください。');
+            }).finally(() => {
+                // ボタンを元に戻す
+                btn.innerHTML = originalText;
+                btn.classList.remove('opacity-70', 'pointer-events-none');
+            });
+        }
+
+        // モーダルを閉じる
+        function closeModal() {
+            document.getElementById('success-modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

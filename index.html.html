@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スマホで作る！生成AIゲーム作成ワークショップ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* レトロポップなファミコン風カラーパレット */
+            --retro-red: #e60012;
+            --retro-blue: #005bac;
+            --retro-yellow: #fbd603;
+            --retro-green: #009e49;
+            --retro-black: #222222;
+        }
+        
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: var(--retro-black);
+            /* チラシの外側の背景にレトロゲーム風の画像を配置 */
+            background-image: 
+                linear-gradient(rgba(34, 34, 34, 0.7), rgba(34, 34, 34, 0.8)),
+                url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=2000&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--retro-black);
+        }
+        
+        .font-pixel {
+            font-family: 'DotGothic16', sans-serif;
+        }
+        
+        /* レトロゲームのUI風の太枠ボックス */
+        .retro-box {
+            background-color: #ffffff;
+            border: 4px solid var(--retro-black);
+            box-shadow: 6px 6px 0px rgba(34, 34, 34, 0.2);
+            position: relative;
+        }
+        
+        /* 角のドット装飾用 */
+        .retro-box::before, .retro-box::after {
+            content: '';
+            position: absolute;
+            background-color: var(--retro-black);
+        }
+
+        /* 飛び出す見出し風 */
+        .retro-heading {
+            text-shadow: 2px 2px 0px var(--retro-black);
+        }
+        .retro-heading-light {
+            text-shadow: 2px 2px 0px #ffffff;
+        }
+
+        /* チラシのメイン枠 */
+        .flyer-container {
+            background-color: #ffffff;
+            /* チラシの内側は薄いドットパターンで紙っぽく */
+            background-image: radial-gradient(#e5e5df 2px, transparent 2px);
+            background-size: 20px 20px;
+            border: 8px solid var(--retro-blue);
+            outline: 4px solid var(--retro-black);
+            outline-offset: -12px;
+            overflow: hidden; /* 透かし画像がはみ出ないようにする */
+        }
+
+        /* チラシ背景の透かし装飾用 */
+        .bg-watermark {
+            position: absolute;
+            color: rgba(0, 0, 0, 0.04);
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+
+    <!-- チラシ全体の枠（A4縦を意識した縦長レイアウト、白背景ベース） -->
+    <div class="max-w-3xl mx-auto flyer-container p-6 sm:p-10 relative shadow-2xl">
+        
+        <!-- 背景の透かし画像（巨大なゲームコントローラーとロボット） -->
+        <i data-lucide="gamepad-2" class="bg-watermark w-96 h-96 top-0 left-[-50px] transform -rotate-12"></i>
+        <i data-lucide="bot" class="bg-watermark w-80 h-80 bottom-40 right-[-30px] transform rotate-12"></i>
+        <i data-lucide="sparkles" class="bg-watermark w-40 h-40 top-1/2 left-1/4"></i>
+
+        <!-- 上部のアクセント -->
+        <div class="absolute top-0 left-0 w-full h-4 flex z-10">
+            <div class="w-1/4 h-full bg-red-500"></div>
+            <div class="w-1/4 h-full bg-yellow-400"></div>
+            <div class="w-1/4 h-full bg-blue-500"></div>
+            <div class="w-1/4 h-full bg-green-500"></div>
+        </div>
+
+        <!-- 1. キャッチコピー -->
+        <div class="text-center mb-10 mt-6 relative z-10">
+            <div class="inline-block bg-yellow-400 border-2 border-black px-4 py-1 mb-4 transform -rotate-2 shadow-[4px_4px_0px_rgba(0,0,0,0.2)]">
+                <span class="font-pixel text-black font-bold tracking-widest">★ GAME CREATOR WORKSHOP ★</span>
+            </div>
+            <h1 class="text-[1.7rem] sm:text-4xl md:text-5xl font-black leading-tight text-gray-800 tracking-tight">
+                <span class="inline-block">君も今日から</span><span class="inline-block">ゲームクリエイター！</span><br>
+                <span class="text-red-600 font-pixel retro-heading-light text-3xl sm:text-5xl md:text-6xl block mt-2 mb-2">スマホとAIで、</span>
+                <span class="inline-block">世界に一つの</span><span class="inline-block">ゲームを作ろう。</span>
+            </h1>
+        </div>
+
+        <!-- 2. リード文 -->
+        <div class="retro-box p-6 mb-12 bg-blue-50 transform rotate-1">
+            <p class="text-gray-800 leading-relaxed text-sm sm:text-base font-bold text-center">
+                「プログラミングって難しそう…」そんな心配はいりません！<br>
+                最新の<span class="text-blue-700 font-pixel text-xl mx-1 border-b-2 border-blue-700">AI(人工知能)</span>にお願いするだけで、<br class="hidden sm:block">君のアイデアがその場でゲームになります。<br><br>
+                ブロック崩し？ アクションゲーム？ それとも誰も見たことのない謎ゲー？<br>
+                スマホ1台で、自分だけのゲームを作って遊んで、友達に自慢しよう！
+            </p>
+        </div>
+
+        <!-- 作例紹介（自作ゲームの画像を入れる枠） -->
+        <div class="mb-12">
+            <h2 class="font-pixel text-xl sm:text-2xl text-center text-black mb-6">
+                ▶ 例えばこんなゲームが作れちゃう！
+            </h2>
+            <div class="flex justify-center">
+                <!-- レトロテレビ風のフレーム -->
+                <div class="bg-gray-800 p-4 sm:p-6 rounded-[2rem] border-8 border-gray-900 shadow-[8px_8px_0px_rgba(0,0,0,0.3)] relative max-w-lg w-full transform -rotate-1 hover:rotate-0 transition-transform">
+                    <!-- アンテナ（飾り） -->
+                    <div class="absolute -top-8 left-10 w-2 h-12 bg-gray-400 transform -rotate-45 hidden sm:block"></div>
+                    <div class="absolute -top-12 left-14 w-2 h-16 bg-gray-400 transform rotate-12 hidden sm:block"></div>
+                    
+                    <!-- 画面部分 -->
+                    <div class="bg-black p-2 rounded-xl border-4 border-gray-600 relative overflow-hidden group">
+                        <!-- スキャンラインエフェクト（画面内のみ） -->
+                        <div class="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(255,255,255,0),rgba(255,255,255,0)_50%,rgba(0,0,0,0.2)_50%,rgba(0,0,0,0.2))] bg-[length:100%_4px] z-10"></div>
+                        
+                        <!-- 作成したゲームの画像 -->
+                        <img src="mygame.png" alt="作成したゲームの画面" class="w-full h-auto aspect-video object-cover rounded">
+                    </div>
+                    
+                    <!-- テレビのボタン類（飾り） -->
+                    <div class="flex justify-end gap-3 mt-4 pr-2">
+                        <div class="w-4 h-4 rounded-full bg-red-500 border-2 border-gray-900"></div>
+                        <div class="w-4 h-4 rounded-full bg-gray-400 border-2 border-gray-900"></div>
+                        <div class="w-4 h-4 rounded-full bg-gray-400 border-2 border-gray-900"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. イベントのポイント -->
+        <div class="mb-12">
+            <h2 class="font-pixel text-2xl text-center text-white bg-black py-2 mb-8 border-4 border-black relative inline-block left-1/2 transform -translate-x-1/2 px-8">
+                ▼ 3つのポイント ▼
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- POINT 1 -->
+                <div class="retro-box p-5 flex flex-col items-center text-center border-t-8 border-t-red-500">
+                    <div class="bg-red-100 p-3 rounded-full mb-3 border-2 border-red-500">
+                        <i data-lucide="smartphone" class="w-8 h-8 text-red-600"></i>
+                    </div>
+                    <h3 class="font-pixel text-red-600 text-xl mb-2">POINT 1<br>スマホだけでOK!</h3>
+                    <p class="text-gray-700 text-xs sm:text-sm font-bold">難しいパソコン操作は不要。いつも使っているスマホやタブレットで参加できます。</p>
+                </div>
+                <!-- POINT 2 -->
+                <div class="retro-box p-5 flex flex-col items-center text-center border-t-8 border-t-blue-500">
+                    <div class="bg-blue-100 p-3 rounded-full mb-3 border-2 border-blue-500">
+                        <i data-lucide="cpu" class="w-8 h-8 text-blue-600"></i>
+                    </div>
+                    <h3 class="font-pixel text-blue-600 text-xl mb-2">POINT 2<br>AIがアシスト!</h3>
+                    <p class="text-gray-700 text-xs sm:text-sm font-bold">「こんなゲームにして」と日本語で入力するだけ。プログラミングの知識がなくても大丈夫。</p>
+                </div>
+                <!-- POINT 3 -->
+                <div class="retro-box p-5 flex flex-col items-center text-center border-t-8 border-t-yellow-500">
+                    <div class="bg-yellow-100 p-3 rounded-full mb-3 border-2 border-yellow-500">
+                        <i data-lucide="swords" class="w-8 h-8 text-yellow-600"></i>
+                    </div>
+                    <h3 class="font-pixel text-yellow-600 text-xl mb-2">POINT 3<br>ベテラン講師サポート</h3>
+                    <p class="text-gray-700 text-xs sm:text-sm font-bold">元・大手塾講師（指導歴10年以上）が、分かりやすく「AIへの命令のコツ」を教えます。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. 開催概要 & 5. 参加費 -->
+        <div class="flex flex-col lg:flex-row gap-6 mb-12">
+            
+            <!-- 開催概要 -->
+            <div class="retro-box flex-grow p-5 sm:p-6 border-4 border-green-600">
+                <h2 class="font-pixel text-2xl text-green-700 mb-4 border-b-2 border-green-700 pb-2">
+                    ▶ 開催概要
+                </h2>
+                <ul class="space-y-4 text-sm sm:text-base font-bold text-gray-800">
+                    <li class="flex items-start gap-3">
+                        <span class="font-pixel text-white bg-green-600 px-2 py-1 text-sm shrink-0">日時</span>
+                        <span class="pt-1">2026年3月29日（日）<br>13:00〜15:00（受付12:45〜）</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="font-pixel text-white bg-green-600 px-2 py-1 text-sm shrink-0">場所</span>
+                        <span class="pt-1">[会場名]就労継続支援B型作業所　1ステップ<br>（千葉県館山市北条2909 / 駐車場あり）</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="font-pixel text-white bg-green-600 px-2 py-1 text-sm shrink-0">対象</span>
+                        <span class="pt-1 text-red-600">小学生〜高校生（初心者大歓迎！）</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="font-pixel text-white bg-green-600 px-2 py-1 text-sm shrink-0">持物</span>
+                        <span class="pt-1">
+                            スマートフォン または タブレット<br>
+                            <span class="text-xs text-gray-600 block mt-1 font-normal bg-gray-100 p-2 rounded">
+                                ※充電を十分にしてきてください。<br>
+                                ※Googleアカウントを使用します（保護者の方の許可を得ておいてください）。
+                            </span>
+                        </span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="font-pixel text-white bg-green-600 px-2 py-1 text-sm shrink-0">定員</span>
+                        <span class="pt-1">先着 <span class="font-pixel text-2xl text-red-600 mx-1">8</span> 名様</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 参加費 -->
+            <div class="lg:w-1/3 flex flex-col">
+                <div class="retro-box bg-yellow-400 p-6 flex flex-col justify-center items-center text-center h-full border-4 border-black border-b-8 border-r-8">
+                    <h2 class="font-pixel text-xl text-black mb-2 bg-white px-3 py-1 border-2 border-black">
+                        参加費
+                    </h2>
+                    <p class="text-gray-800 line-through text-sm mb-2 font-bold">通常: 2,000円(税込)</p>
+                    
+                    <div class="w-full bg-red-600 text-white font-bold py-1 px-2 text-xs mb-3 border-2 border-black animate-pulse">
+                        ＼チラシを見た! or 友達と一緒で／
+                    </div>
+                    
+                    <p class="font-pixel text-5xl text-black retro-heading-light mb-2">
+                        <span class="text-lg block mb-1">特別価格</span>
+                        1,500<span class="text-2xl">円</span>
+                    </p>
+                    <p class="text-[10px] text-gray-800 mt-2 font-bold">（※当日現金でお支払いください）</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. 講師プロフィール・主催者情報 -->
+        <div class="border-t-4 border-dashed border-gray-400 pt-8">
+            <div class="flex flex-col md:flex-row gap-6 items-center md:items-start mb-8 retro-box bg-gray-50 p-6">
+                <!-- 講師画像 -->
+                <div class="w-24 h-24 bg-white border-4 border-blue-600 rounded overflow-hidden shrink-0">
+                    <!-- ▼▼▼ ここに講師の画像のファイル名を入れます ▼▼▼ -->
+                    <img src="11.png" alt="講師の顔写真" class="w-full h-full object-cover">
+                    <!-- ▲▲▲ ここまで ▲▲▲ -->
+                </div>
+                <div>
+                    <h3 class="font-pixel text-xl text-blue-800 mb-2 border-b-2 border-blue-200 inline-block pb-1">【講師】 松下　祥太郎（まつした　しょうたろう）</h3>
+                    <p class="text-sm text-gray-800 mb-4 font-bold leading-relaxed">
+                        元・進学塾講師として10年以上、多くの子どもたちを指導。現在は市内福祉事業所の管理者として勤務。
+                    </p>
+                    <div class="bg-white border-2 border-black p-3 text-sm font-bold text-gray-800 relative shadow-[4px_4px_0px_#fbd603]">
+                        <span class="absolute -top-3 left-3 bg-yellow-400 border border-black px-2 font-pixel text-xs text-black">MESSAGE</span>
+                        「AIを使う力は、これからの時代の魔法の杖です。一緒に楽しみましょう！」
+                    </div>
+                </div>
+            </div>
+
+            <!-- 予約方法・お問い合わせ -->
+            <div class="text-center">
+                <h3 class="font-pixel text-2xl text-black mb-6">▶ 予約方法・お問い合わせ</h3>
+                <div class="retro-box bg-white p-6 sm:p-8 inline-block w-full">
+                    
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-8">
+                        
+                        <!-- 左側：予約手順とメール -->
+                        <div class="text-left space-y-4 flex-1">
+                            <h4 class="font-pixel text-xl text-red-600 border-b-2 border-red-200 pb-2">かんたんWeb予約</h4>
+                            <p class="text-sm font-bold text-gray-700">
+                                右のQRコードをスマホのカメラで読み取って<br class="hidden sm:block">
+                                専用フォームからお申し込みください。<br>
+                                または、下記アドレス宛にメールでご連絡ください。
+                            </p>
+                            
+                            <div class="bg-gray-100 p-4 border-2 border-dashed border-gray-400 mt-4">
+                                <p class="text-xs text-gray-500 mb-1">■ メールでお申し込みの場合</p>
+                                <p class="font-bold flex items-center gap-2 text-blue-700">
+                                    <i data-lucide="mail" class="w-5 h-5 text-black"></i>
+                                    denno.library@gmail.com
+                                </p>
+                                <p class="text-[11px] text-gray-600 mt-2 font-normal leading-relaxed">
+                                    件名に「ゲームワークショップ参加希望」、<br class="hidden sm:block">本文に「お名前・学年・参加人数」をご記入ください。
+                                </p>
+                            </div>
+
+                            <p class="text-gray-600 text-xs pt-4 border-t border-gray-300">
+                                主催: 電脳図書館　協賛：さくら子庵株式会社<br>
+                                ※お預かりした個人情報は本イベントの管理にのみ使用いたします。
+                            </p>
+                        </div>
+
+                        <!-- 右側：QRコード -->
+                        <div class="flex flex-col items-center justify-center shrink-0 bg-yellow-100 p-5 border-4 border-black shadow-[4px_4px_0px_rgba(0,0,0,0.1)]">
+                            <p class="font-pixel text-black bg-yellow-400 px-3 py-1 border-2 border-black mb-4 animate-bounce">
+                                ↓ スマホでパシャ! ↓
+                            </p>
+                            <div class="border-4 border-black p-2 bg-white">
+                                <!-- QRコードのダミー -->
+                                <div class="w-28 h-28 bg-gray-200 flex items-center justify-center relative group">
+                                    <i data-lucide="qr-code" class="w-16 h-16 text-gray-500"></i>
+                                    <span class="absolute inset-0 flex items-center justify-center bg-black/70 text-white text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">QRを貼る場所</span>
+                                </div>
+                            </div>
+                            <p class="text-sm font-bold mt-3 text-center">
+                                予約フォーム<br>
+                                <span class="text-xs text-red-600">（24時間受付）</span>
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Lucideアイコンの初期化
+        lucide.createIcons();
+    </script>
+</body>
+</html>
